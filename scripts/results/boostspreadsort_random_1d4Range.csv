@@ -1,0 +1,18 @@
+2021-03-20T17:12:26+01:00
+Running ../build/src/sortBmks
+Run on (12 X 2600 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.80, 1.79, 1.62
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message
+"SortingBmk_random_1d4Range/BoostSpreadSort/10000",35944,76.7014,76.6377,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/60000",2080,1372.89,1371.47,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/110000",1024,2699.51,2697.11,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/160000",685,4090.38,4085.87,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/210000",508,5591.84,5586.56,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/260000",393,7021.39,7013.38,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/310000",336,8375.58,8366.99,us,,,,,
+"SortingBmk_random_1d4Range/BoostSpreadSort/360000",276,9900.35,9892.95,us,,,,,

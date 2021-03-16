@@ -1,0 +1,18 @@
+2021-03-20T15:38:20+01:00
+Running ../build/sortBmks
+Run on (12 X 2600 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 256 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+Load Average: 1.61, 1.61, 1.74
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message
+"SortingBmk_random_wholeRange/NaiveRadixSort/10000",3091,896.149,895.204,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/60000",519,5412.78,5406.99,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/110000",291,10165.1,10115.4,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/160000",196,14905.7,14832.3,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/210000",150,18999.3,18962.4,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/260000",117,26276.3,26193.8,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/310000",83,32817.9,32579.1,us,,,,,
+"SortingBmk_random_wholeRange/NaiveRadixSort/360000",73,40198.3,36585.1,us,,,,,
