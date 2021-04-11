@@ -4,6 +4,7 @@
 
 #include "boost_spread_sort.h"
 #include "naiveradixsort.h"
+#include "lessnaiveradixsort.h"
 
 using T = int64_t;
 
@@ -23,7 +24,9 @@ int main(int, char**)
     std::vector<T> buffer(n);
 
     //radixSort_count(vals, buffer);
-    integer_sort(vals.begin(), vals.end());
+    //integer_sort(vals.begin(), vals.end());
+
+    radix_sort7((uint64_t*)&vals.front(), vals.size());
 
     for (size_t i = 1; i < n; ++i) {
         if (vals[i - 1] > vals[i]) {
