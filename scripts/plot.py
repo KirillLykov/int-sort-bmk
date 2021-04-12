@@ -78,10 +78,13 @@ def main():
     parser.add_argument('-f1','--file1', help='First input csv', required=True)
     parser.add_argument('-f2','--file2', help='Second input csv', required=True)
     parser.add_argument('-f3','--file3', help='Third input csv', required=True)
-    parser.add_argument('-o','--output', help='Output image file', required=True)
+    parser.add_argument('-l1','--lab1', help='First input label', required=True)
+    parser.add_argument('-l2','--lab2', help='Second input label', required=False, default="std::stable_sort")
+    parser.add_argument('-l3','--lab3', help='Third input label', required=False, default="boost::spreadsort")
+    parser.add_argument('-o','--output', help='Output image file', required=False, default="naivesort")
     args = vars(parser.parse_args())
 
-    loadAndPlot(args['file1'], args['file2'], args['file3'], args['output'], "std::stable_sort", "boost::spreadsort", "naiveradix")
+    loadAndPlot(args['file1'], args['file2'], args['file3'], args['output'], args['lab1'], args['lab2'], args['lab3'])
 
 if __name__ == "__main__":
     main()
