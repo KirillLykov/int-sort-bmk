@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <string.h>
 #include <assert.h>
+#include <stack>
+#include <tuple>
 
 #include <x86intrin.h>
 
@@ -108,6 +110,7 @@ void radix_sort6(std::vector<uint64_t>& aa)
     auto a = &aa[0];
     std::vector<uint64_t> queue_area(count);
 
+    //  moving hist inside main loop makes execution x2 slower
     freq_array_type freqs = {};
     for (size_t i = 0; i < count; i++) {
       uint64_t value = a[i];
@@ -168,8 +171,13 @@ void radix_sort_msd(std::vector<uint64_t>& aa)
 
     uint64_t *from = a, *to = &queue_area[0];
 
-    for (int pass = RADIX_LEVELS; pass >= 0; --pass) {
-    
+    std::stack<std::tuple<int,size_t,size_t, uint64_t*, uint64_t*>> st; // pass, lo, hi, toLo, fromLo
+    st.emplace(0, 0, count, to, from);
+    //for (size_t pass = 0; pass < RADIX_LEVELS; pass++) {
+    while (!st.empty()) {
+        auto[pass, lo, hi, toLo, fromLo] = st.top();
+        st.pop();
+
         size_t freqs[RADIX_SIZE] = {};
         for (size_t i = 0; i < count; i++) {
             uint64_t value = a[i];
@@ -178,31 +186,35 @@ void radix_sort_msd(std::vector<uint64_t>& aa)
 
         if (is_trivial(freqs, count)) {
             // this pass would do nothing, just skip it
+            if (pass + 1 < RADIX_LEVELS)
+                st.emplace(pass + 1, lo, hi, toLo, fromLo);
             continue;
         }
 
-        int64_t shift = pass * RADIX_BITS;
+        uint64_t shift = pass * RADIX_BITS;
 
         // array of pointers to the current position in each queue, which we set up based on the
         // known final sizes of each queue (i.e., "tighly packed")
-        uint64_t * queue_ptrs[RADIX_SIZE];
-        queue_ptrs[0] = to;
+        uint64_t * queue_ptrs[RADIX_SIZE], * next = toLo;
         for (size_t i = 0; i < RADIX_SIZE; i++) {
-            queue_ptrs[i] = queue_ptrs[i-1] + freqs[i];
+            queue_ptrs[i] = next;
+            next += freqs[i];
         }
 
         // copy each element into the appropriate queue based on the current RADIX_BITS sized
         // "digit" within it
         for (size_t i = 0; i < count; i++) {
-            size_t value = from[i];
+            size_t value = fromLo[i];
             size_t index = partFunc(value, shift);
             //*queue_ptrs[index]++ = value;
             *queue_ptrs[index] = value;
             ++queue_ptrs[index];
         }
+        std::swap(fromLo, toLo);
+        if (pass + 1 < RADIX_LEVELS)
+            st.emplace(pass + 1, lo, hi, toLo, fromLo);
 
         // swap from and to areas
-        std::swap(from, to);
     }
 
     // because of the last swap, the "from" area has the sorted payload: if it's
