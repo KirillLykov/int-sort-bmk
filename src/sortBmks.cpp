@@ -25,8 +25,6 @@
         }                                                            \
     }
 
-using T = int64_t;
-
 class SortingBmk_allUnique : public benchmark::Fixture {
 public:
     std::vector<T> m_vals;
@@ -69,11 +67,10 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, NaiveRadixSort)
     const auto n = state.range(0);
 
     std::vector<T> values(m_vals.size());
-    std::vector<T> buffer(m_vals.size());
     for (auto _ : state) {
         std::copy(m_vals.begin(), m_vals.end(), values.begin());
 
-        radixSort_count(values, buffer);
+        radixSort_count(values);
         benchmark::DoNotOptimize(values);
         benchmark::ClobberMemory();
     }
@@ -133,11 +130,10 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, NaiveRadixSort)
     const auto n = state.range(0);
 
     std::vector<T> values(m_vals.size());
-    std::vector<T> buffer(m_vals.size());
     for (auto _ : state) {
         std::copy(m_vals.begin(), m_vals.end(), values.begin());
 
-        radixSort_count(values, buffer);
+        radixSort_count(values);
         benchmark::DoNotOptimize(values);
         benchmark::ClobberMemory();
     }
@@ -154,7 +150,8 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LessNaiveRadixSort)
     for (auto _ : state) {
         std::copy(m_vals.begin(), m_vals.end(), values.begin());
 
-        radix_sort7((uint64_t*)&values.front(), values.size());
+        //radix_sort7((uint64_t*)&values.front(), values.size());
+        radix_sort_msd(values);
         benchmark::DoNotOptimize(values);
         benchmark::ClobberMemory();
     }
@@ -207,11 +204,10 @@ BENCHMARK_DEFINE_F(SortingBmk_random_1d4Range, NaiveRadixSort)
     const auto n = state.range(0);
 
     std::vector<T> values(m_vals.size());
-    std::vector<T> buffer(m_vals.size());
     for (auto _ : state) {
         std::copy(m_vals.begin(), m_vals.end(), values.begin());
 
-        radixSort_count(values, buffer);
+        radixSort_count(values);
         benchmark::DoNotOptimize(values);
         benchmark::ClobberMemory();
     }

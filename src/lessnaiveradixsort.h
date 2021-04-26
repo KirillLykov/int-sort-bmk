@@ -135,7 +135,7 @@ void radix_sort6(std::vector<uint64_t>& aa)
         uint64_t * queue_ptrs[RADIX_SIZE], * next = to;
         //queue_ptrs[0] = to;
         for (size_t i = 0; i < RADIX_SIZE; i++) {
-            //queue_ptrs[i] = queue_ptrs[i-1] + freqs[pass][i];
+            //queue_ptrs[i] = queue_ptrs[i-1] + freqs[pass][i]; i - 1?
             queue_ptrs[i] = next;
             next += freqs[pass][i];
         }
@@ -171,17 +171,19 @@ void radix_sort_msd(std::vector<uint64_t>& aa)
 
     uint64_t *from = a, *to = &queue_area[0];
 
-    std::stack<std::tuple<int,size_t,size_t, uint64_t*, uint64_t*>> st; // pass, lo, hi, toLo, fromLo
-    st.emplace(0, 0, count, to, from);
+    std::stack<std::tuple<int,size_t, uint64_t*, uint64_t*>> st; // pass, count, toLo, fromLo
+    st.emplace(RADIX_LEVELS - 1, count, to, from);
     //for (size_t pass = 0; pass < RADIX_LEVELS; pass++) {
     while (!st.empty()) {
-        auto[pass, lo, hi, toLo, fromLo] = st.top();
+        auto[pass, count, toLo, fromLo] = st.top();
         st.pop();
+
+        uint64_t shift = pass * RADIX_BITS;
 
         size_t freqs[RADIX_SIZE] = {};
         for (size_t i = 0; i < count; i++) {
-            uint64_t value = a[i];
-            ++freqs[partFunc(value, pass * RADIX_BITS)];
+            uint64_t value = fromLo[i];
+            ++freqs[partFunc(value, shift)];
         }
 
         if (is_trivial(freqs, count)) {
@@ -191,7 +193,6 @@ void radix_sort_msd(std::vector<uint64_t>& aa)
             continue;
         }
 
-        uint64_t shift = pass * RADIX_BITS;
 
         // array of pointers to the current position in each queue, which we set up based on the
         // known final sizes of each queue (i.e., "tighly packed")
@@ -210,11 +211,14 @@ void radix_sort_msd(std::vector<uint64_t>& aa)
             *queue_ptrs[index] = value;
             ++queue_ptrs[index];
         }
-        std::swap(fromLo, toLo);
+        // swap when we change the level
+        if (prevPass < pass) {
+            prevPass = pass;
+            std::swap(fromLo, toLo);
+        }
         if (pass + 1 < RADIX_LEVELS)
+            for (size_t i = 0; i < RADIX_SIZE; i++) {
             st.emplace(pass + 1, lo, hi, toLo, fromLo);
-
-        // swap from and to areas
     }
 
     // because of the last swap, the "from" area has the sorted payload: if it's
