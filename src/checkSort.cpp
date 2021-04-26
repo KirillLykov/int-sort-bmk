@@ -5,6 +5,7 @@
 #include "boost_spread_sort.h"
 #include "naiveradixsort.h"
 #include "lessnaiveradixsort.h"
+#include "msdradix.h"
 
 
 // was lazy to install gtests on my personal machine

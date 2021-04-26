@@ -10,6 +10,7 @@
 #include "boost_spread_sort.h"
 #include "naiveradixsort.h"
 #include "lessnaiveradixsort.h"
+#include "msdradix.h"
 
 #define TEST_SIZE DenseRange(10000, 400000, 50000)
 
@@ -140,7 +141,7 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, NaiveRadixSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, NaiveRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LessNaiveRadixSort)
+BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LSDRadixSort)
 (benchmark::State& state)
 {
     // it is custom due to buffer
@@ -150,13 +151,29 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LessNaiveRadixSort)
     for (auto _ : state) {
         std::copy(m_vals.begin(), m_vals.end(), values.begin());
 
-        //radix_sort7((uint64_t*)&values.front(), values.size());
+        radix_sort7(&values.front(), values.size());
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, LSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, MSDRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
         radix_sort_msd(values);
         benchmark::DoNotOptimize(values);
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, LessNaiveRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, MSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
 
 /// uniform random numbers in the range [0, n/4] (1/4 are unique)
 ///
