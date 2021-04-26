@@ -7,8 +7,6 @@
 #include <assert.h>
 #include <string.h>
 #include <assert.h>
-#include <stack>
-#include <tuple>
 
 namespace msd_impl
 {
@@ -23,6 +21,16 @@ const size_t    DO_FINAL_SWAP = RADIX_LEVELS & 1; // if RADIX_LEVELS is even, bu
 
 constexpr auto partFunc = [](T v, size_t i) -> int { return (v >> i) & RADIX_MASK; }; // it looks to be inlined
 
+static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count) {
+    for (size_t i = 0; i < RADIX_SIZE; i++) {
+        auto freq = freqs[i];
+        if (freq != 0) {
+            return freq == count;
+        }
+    }
+    assert(count == 0); // we only get here if count was zero
+    return true;
+}
 // pass <- [7, 0]
 void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t hi, size_t pass) {
     //cout << "ITER " << lo << " " << hi << ", " << pass << endl;
@@ -32,6 +40,11 @@ void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t h
     for (size_t i = lo; i < hi; ++i) {
         T value = from[i];
         ++freq[partFunc(value, shift)];
+    }
+    if (is_trivial(freq, hi - lo)) {
+        if (pass != 0) // at least one element to sort
+            radix_msd_rec(from, to, lo, hi, pass - 1);
+        return;
     }
 
     T* queue_ptrs[RADIX_SIZE];
