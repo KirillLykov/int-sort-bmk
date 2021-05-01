@@ -34,6 +34,13 @@ static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count) {
 // pass <- [7, 0]
 void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t hi, size_t pass) {
     //cout << "ITER " << lo << " " << hi << ", " << pass << endl;
+    if (hi - lo < 16) { // there will be insertion sort under the hood
+        auto s = &from.front() + lo;
+        auto e = &from.front() + hi;
+        std::stable_sort(s, e);
+        return;
+    }
+
     size_t shift = pass * RADIX_BITS;
 
     size_t freq[RADIX_SIZE] = {};
@@ -62,9 +69,9 @@ void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t h
     auto newLo = lo;
     auto newHi = lo + freq[0];
     for (size_t i = 1; i < RADIX_SIZE; ++i) {
-        if (newHi - newLo > 1 && pass != 0) // at least one element to sort
+        if (newHi - newLo > 1 && pass != 0) {// at least one element to sort
             radix_msd_rec(to, from, newLo, newHi, pass - 1);
-
+        }
         newLo = newHi;
         newHi += freq[i];
     }

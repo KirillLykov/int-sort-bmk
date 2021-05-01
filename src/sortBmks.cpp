@@ -12,7 +12,7 @@
 #include "lsdradixsort_travis.h"
 #include "msdradix.h"
 
-#define TEST_SIZE DenseRange(10000, 400000, 50000)
+#define TEST_SIZE DenseRange(10000, 600000, 50000)
 
 #define BMKBODY(SORT)                                                \
     {                                                                \
