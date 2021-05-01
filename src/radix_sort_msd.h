@@ -10,16 +10,10 @@
 
 namespace msd_impl
 {
-using T = uint64_t;
-
 const size_t    RADIX_BITS   = 8;
-const size_t    RADIX_SIZE   = (size_t)1 << RADIX_BITS;
-const size_t    RADIX_LEVELS = (63 / RADIX_BITS) + 1;
-const T  RADIX_MASK   = RADIX_SIZE - 1;
-
-const size_t    DO_FINAL_SWAP = RADIX_LEVELS & 1; // if RADIX_LEVELS is even, buf contains the result
-
-constexpr auto partFunc = [](T v, size_t i) -> int { return (v >> i) & RADIX_MASK; }; // it looks to be inlined
+const size_t    RADIX_SIZE   = 1ull << RADIX_BITS;
+const size_t    RADIX_LEVELS = (63ull / RADIX_BITS) + 1ull;
+const size_t    DO_FINAL_SWAP = RADIX_LEVELS & 1ull; // if RADIX_LEVELS is even, buf contains the result
 
 static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count) {
     for (size_t i = 0; i < RADIX_SIZE; i++) {
@@ -28,12 +22,14 @@ static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count) {
             return freq == count;
         }
     }
-    assert(count == 0); // we only get here if count was zero
     return true;
 }
+
 // pass <- [7, 0]
+template<class T>
 void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t hi, size_t pass) {
-    //cout << "ITER " << lo << " " << hi << ", " << pass << endl;
+    constexpr T RADIX_MASK = RADIX_SIZE - 1;
+    auto partFunc = [RADIX_MASK](T v, size_t i) -> T { return (v >> i) & RADIX_MASK; }; // inlined
     if (hi - lo < 16) { // there will be insertion sort under the hood
         auto s = &from.front() + lo;
         auto e = &from.front() + hi;

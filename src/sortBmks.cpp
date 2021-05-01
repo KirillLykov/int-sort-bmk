@@ -109,7 +109,7 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LSDRadixSort)
     for (auto _ : state) {
         std::copy(m_vals.begin(), m_vals.end(), values.begin());
 
-        radix_sort7(&values.front(), values.size());
+        radix_sort_lsd_travis(&values.front(), values.size());
         benchmark::DoNotOptimize(values);
         benchmark::ClobberMemory();
     }
