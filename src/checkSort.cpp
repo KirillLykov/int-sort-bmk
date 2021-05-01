@@ -14,12 +14,12 @@ int main(int, char**)
 
     std::default_random_engine generator;
     std::uniform_int_distribution<T> distribution(0, n);
-    
+
     for (int i = 0; i < n; ++i) {
         vals[i] = distribution(generator);
     }
 
-    std::shuffle(vals.begin(), vals.end(), std::mt19937{std::random_device{}()});
+    std::shuffle(vals.begin(), vals.end(), std::mt19937 { std::random_device {}() });
 
     for (auto& v : vals)
         std::cout << v << " ";

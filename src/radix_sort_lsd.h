@@ -24,12 +24,11 @@ SOFTWARE.
 */
 
 #include <algorithm>
-#include <memory>
 #include <array>
 #include <assert.h>
-#include <string.h>
-#include <assert.h>
+#include <memory>
 #include <stack>
+#include <string.h>
 #include <tuple>
 
 #include <x86intrin.h>
@@ -37,27 +36,27 @@ SOFTWARE.
 /* HEDLEY_INLINE */
 #define HEDLEY_INLINE inline
 /* HEDLEY_NEVER_INLINE */
-#  define HEDLEY_NEVER_INLINE __attribute__((__noinline__))
+#define HEDLEY_NEVER_INLINE __attribute__((__noinline__))
 
-const size_t    RADIX_BITS   = 8;
-const size_t    RADIX_SIZE   = (size_t)1 << RADIX_BITS;
-const size_t    RADIX_LEVELS = (63 / RADIX_BITS) + 1;
+const size_t RADIX_BITS = 8;
+const size_t RADIX_SIZE = (size_t)1 << RADIX_BITS;
+const size_t RADIX_LEVELS = (63 / RADIX_BITS) + 1;
 
-using freq_array_type = size_t [RADIX_LEVELS][RADIX_SIZE];
+using freq_array_type = size_t[RADIX_LEVELS][RADIX_SIZE];
 
 // never inline just to make it show up easily in profiles (inlining this lengthly function doesn't
 // really help anyways)
-template<class T>
-HEDLEY_NEVER_INLINE
-static void count_frequency(T *a, size_t count, freq_array_type freqs) {
-  constexpr T RADIX_MASK   = RADIX_SIZE - 1;
-  for (size_t i = 0; i < count; i++) {
-      T value = a[i];
-      for (size_t pass = 0; pass < RADIX_LEVELS; pass++) {
-          freqs[pass][value & RADIX_MASK]++;
-          value >>= RADIX_BITS;
-      }
-  }
+template <class T>
+HEDLEY_NEVER_INLINE static void count_frequency(T* a, size_t count, freq_array_type freqs)
+{
+    constexpr T RADIX_MASK = RADIX_SIZE - 1;
+    for (size_t i = 0; i < count; i++) {
+        T value = a[i];
+        for (size_t pass = 0; pass < RADIX_LEVELS; pass++) {
+            freqs[pass][value & RADIX_MASK]++;
+            value >>= RADIX_BITS;
+        }
+    }
 }
 
 /**
@@ -67,7 +66,8 @@ static void count_frequency(T *a, size_t count, freq_array_type freqs) {
  * occurrences. In that case, the radix step just acts as a copy so we can
  * skip it.
  */
-static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count) {
+static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count)
+{
     for (size_t i = 0; i < RADIX_SIZE; i++) {
         auto freq = freqs[i];
         if (freq != 0) {
@@ -78,10 +78,10 @@ static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count) {
     return true;
 }
 
-template<class T>
+template <class T>
 inline void radix_sort_lsd_travis(T* a, size_t count)
 {
-    constexpr T RADIX_MASK   = RADIX_SIZE - 1;
+    constexpr T RADIX_MASK = RADIX_SIZE - 1;
     std::unique_ptr<T[]> queue_area(new T[count]);
 
     freq_array_type freqs = {};
@@ -100,7 +100,7 @@ inline void radix_sort_lsd_travis(T* a, size_t count)
 
         // array of pointers to the current position in each queue, which we set up based on the
         // known final sizes of each queue (i.e., "tighly packed")
-        T * queue_ptrs[RADIX_SIZE], * next = to;
+        T *queue_ptrs[RADIX_SIZE], *next = to;
         for (size_t i = 0; i < RADIX_SIZE; i++) {
             queue_ptrs[i] = next;
             next += freqs[pass][i];
