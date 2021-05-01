@@ -7,10 +7,8 @@
 #include <random>
 #include <vector>
 
-#include "boost_spread_sort.h"
-#include "naiveradixsort.h"
-#include "lsdradixsort_travis.h"
-#include "msdradix.h"
+#include "radix_sort_lsd.h"
+#include "radix_sort_msd.h"
 
 #define TEST_SIZE DenseRange(10000, 600000, 50000)
 
@@ -25,6 +23,7 @@
             benchmark::ClobberMemory();                              \
         }                                                            \
     }
+using T = uint64_t;
 
 class SortingBmk_allUnique : public benchmark::Fixture {
 public:
@@ -61,24 +60,7 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, BoostSpreadSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_allUnique, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_allUnique, NaiveRadixSort)
-(benchmark::State& state)
-{
-    // it is custom due to buffer
-    const auto n = state.range(0);
-
-    std::vector<T> values(m_vals.size());
-    for (auto _ : state) {
-        std::copy(m_vals.begin(), m_vals.end(), values.begin());
-
-        radixSort_count(values);
-        benchmark::DoNotOptimize(values);
-        benchmark::ClobberMemory();
-    }
-}
-BENCHMARK_REGISTER_F(SortingBmk_allUnique, NaiveRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
-
-/// uniform random numbers in the range [0, n]
+/// uniform random numbers in the range [0, 1e6]
 ///
 class SortingBmk_random_wholeRange : public benchmark::Fixture {
 public:
@@ -90,7 +72,7 @@ public:
         m_vals.resize(n);
 
         std::default_random_engine generator;
-        std::uniform_int_distribution<T> distribution(0, n);
+        std::uniform_int_distribution<T> distribution(0, 1e6);
 
         for (int i = 0; i < n; ++i) {
             m_vals[i] = distribution(generator);
@@ -116,30 +98,6 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, BoostSpreadSort)
     BMKBODY(boost::sort::spreadsort::spreadsort);
 }
 BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
-
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, MyIntegerSort)
-(benchmark::State& state)
-{
-    BMKBODY(integer_sort);
-}
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, MyIntegerSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
-
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, NaiveRadixSort)
-(benchmark::State& state)
-{
-    // it is custom due to buffer
-    const auto n = state.range(0);
-
-    std::vector<T> values(m_vals.size());
-    for (auto _ : state) {
-        std::copy(m_vals.begin(), m_vals.end(), values.begin());
-
-        radixSort_count(values);
-        benchmark::DoNotOptimize(values);
-        benchmark::ClobberMemory();
-    }
-}
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, NaiveRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
 BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LSDRadixSort)
 (benchmark::State& state)
@@ -173,62 +131,5 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, MSDRadixSort)
     }
 }
 BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, MSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
-
-
-/// uniform random numbers in the range [0, n/4] (1/4 are unique)
-///
-class SortingBmk_random_1d4Range : public benchmark::Fixture {
-public:
-    std::vector<T> m_vals;
-
-    void SetUp(const ::benchmark::State& state)
-    {
-        const auto n = state.range(0);
-        m_vals.resize(n);
-
-        std::default_random_engine generator;
-        std::uniform_int_distribution<T> distribution(0, n / 4);
-
-        for (int i = 0; i < n; ++i) {
-            m_vals[i] = distribution(generator);
-        }
-    }
-
-    void TearDown(const ::benchmark::State& state) { }
-};
-
-// We are interested in stable sort because it is currently used
-BENCHMARK_DEFINE_F(SortingBmk_random_1d4Range, StdStableSort)
-(benchmark::State& state)
-{
-    BMKBODY(std::stable_sort);
-}
-BENCHMARK_REGISTER_F(SortingBmk_random_1d4Range, StdStableSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
-
-// We are interested in spreadsort because it is radix sort for integers
-// and we want to achieve performance of this implementation but with stable version
-BENCHMARK_DEFINE_F(SortingBmk_random_1d4Range, BoostSpreadSort)
-(benchmark::State& state)
-{
-    BMKBODY(boost::sort::spreadsort::spreadsort);
-}
-BENCHMARK_REGISTER_F(SortingBmk_random_1d4Range, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
-
-BENCHMARK_DEFINE_F(SortingBmk_random_1d4Range, NaiveRadixSort)
-(benchmark::State& state)
-{
-    // it is custom due to buffer
-    const auto n = state.range(0);
-
-    std::vector<T> values(m_vals.size());
-    for (auto _ : state) {
-        std::copy(m_vals.begin(), m_vals.end(), values.begin());
-
-        radixSort_count(values);
-        benchmark::DoNotOptimize(values);
-        benchmark::ClobberMemory();
-    }
-}
-BENCHMARK_REGISTER_F(SortingBmk_random_1d4Range, NaiveRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
 BENCHMARK_MAIN();

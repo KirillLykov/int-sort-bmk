@@ -2,15 +2,13 @@
 #include <random>
 #include <vector>
 
-#include "boost_spread_sort.h"
-#include "naiveradixsort.h"
-#include "lsdradixsort_travis.h"
-#include "msdradix.h"
-
+#include "radix_sort_lsd.h"
+#include "radix_sort_msd.h"
 
 // was lazy to install gtests on my personal machine
 int main(int, char**)
 {
+    using T = uint64_t;
     const auto n = 1000;
     std::vector<T> vals(n); //  = {6, 7, 11, 10, 6};
 

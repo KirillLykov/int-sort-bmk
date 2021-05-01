@@ -124,8 +124,10 @@ inline void radix_sort7(uint64_t *a, size_t count)
         std::copy(from, from + count, a);
     }
 }
+/*
 void radix_sort6(std::vector<uint64_t>& aa)
 {
+    using T = uint64_t;
     constexpr auto partFunc = [](T v, size_t i) -> int { return (v >> i) & radix_mask; }; // it looks to be inlined
 
     const auto count = aa.size();
@@ -167,7 +169,7 @@ void radix_sort6(std::vector<uint64_t>& aa)
         for (size_t i = 0; i < count; i++) {
             size_t value = from[i];
             size_t index = partFunc(value, shift);
-            //*queue_ptrs[index]++ = value;
+            // *queue_ptrs[index]++ = value;
             *queue_ptrs[index] = value;
             ++queue_ptrs[index];
         }
@@ -182,3 +184,4 @@ void radix_sort6(std::vector<uint64_t>& aa)
         std::copy(from, from + count, a);
     }
 }
+*/

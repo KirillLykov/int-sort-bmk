@@ -80,6 +80,7 @@ void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t h
 }
 }
 
+template<class T>
 void radix_sort_msd(std::vector<T>& data)
 {
     std::vector<T> buf(data.size());
