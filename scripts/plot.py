@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3.7
 import argparse
+import logging
 import numpy as np
 import pandas as pd
 import matplotlib as mlt

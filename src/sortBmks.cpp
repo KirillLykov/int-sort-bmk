@@ -51,8 +51,6 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, StdStableSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_allUnique, StdStableSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-// We are interested in spreadsort because it is radix sort for integers
-// and we want to achieve performance of this implementation but with stable version
 BENCHMARK_DEFINE_F(SortingBmk_allUnique, BoostSpreadSort)
 (benchmark::State& state)
 {
@@ -60,9 +58,41 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, BoostSpreadSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_allUnique, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-/// uniform random numbers in the range [0, 1e6]
+BENCHMARK_DEFINE_F(SortingBmk_allUnique, RadixSortMSD)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<uint64_t> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_msd(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_allUnique, RadixSortMSD)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_allUnique, RadixSortLSD)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<uint64_t> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_lsd_travis(&values[0], values.size());
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_allUnique, RadixSortLSD)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
+/// uniform random numbers in the range [0, 1e9]
 ///
-class SortingBmk_random_wholeRange : public benchmark::Fixture {
+class SortingBmk_uniform_1B : public benchmark::Fixture {
 public:
     std::vector<T> m_vals;
 
@@ -72,7 +102,7 @@ public:
         m_vals.resize(n);
 
         std::default_random_engine generator;
-        std::uniform_int_distribution<T> distribution(0, 1e6);
+        std::uniform_int_distribution<T> distribution(0, 1e9);
 
         for (int i = 0; i < n; ++i) {
             m_vals[i] = distribution(generator);
@@ -83,23 +113,21 @@ public:
 };
 
 // We are interested in stable sort because it is currently used
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, StdStableSort)
+BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, StdStableSort)
 (benchmark::State& state)
 {
     BMKBODY(std::stable_sort);
 }
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, StdStableSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, StdStableSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-// We are interested in spreadsort because it is radix sort for integers
-// and we want to achieve performance of this implementation but with stable version
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, BoostSpreadSort)
+BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, BoostSpreadSort)
 (benchmark::State& state)
 {
     BMKBODY(boost::sort::spreadsort::spreadsort);
 }
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LSDRadixSort)
+BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, LSDRadixSort)
 (benchmark::State& state)
 {
     // it is custom due to buffer
@@ -114,9 +142,9 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, LSDRadixSort)
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, LSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, LSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, MSDRadixSort)
+BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, MSDRadixSort)
 (benchmark::State& state)
 {
     const auto n = state.range(0);
@@ -130,6 +158,6 @@ BENCHMARK_DEFINE_F(SortingBmk_random_wholeRange, MSDRadixSort)
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_random_wholeRange, MSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, MSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
 BENCHMARK_MAIN();
