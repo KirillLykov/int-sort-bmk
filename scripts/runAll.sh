@@ -1,17 +1,22 @@
 #!/bin/bash
 
-BMK="../build/src/sortBmks --benchmark_min_time=2 --benchmark_counters_tabular=true --benchmark_out_format=csv"
+BMK="../build/src/allunique_bmk"
+BMK_OPTIONS="--benchmark_min_time=2 --benchmark_counters_tabular=true --benchmark_out_format=csv"
+CMD="$BMK $BMK_OPTIONS"
 
-#$BMK --benchmark_filter=SortingBmk_allUnique/StdStableSort --benchmark_out=results/stdstablesort_allUnique.csv
+#$CMD --benchmark_filter=SortingBmk_allUnique/StdStableSort --benchmark_out=results/stdstablesort_allUnique.csv
 
-$BMK --benchmark_filter=SortingBmk_allUnique/BoostSpreadSort --benchmark_out=results/boostspreadsort_allUnique.csv
+#$CMD --benchmark_filter=SortingBmk_allUnique/BoostSpreadSort --benchmark_out=results/boostspreadsort_allUnique.csv
 
-$BMK --benchmark_filter=SortingBmk_allUnique/RadixSortMSD --benchmark_out=results/radixsortmsd_allUnique.csv
+#$CMD --benchmark_filter=SortingBmk_allUnique/RadixSortMSD --benchmark_out=results/radixsortmsd_allUnique.csv
 
-./plot.py -l1 "std::stable_sort" -f1 results/stdstablesort_allUnique.csv -l2 "boost::spreadsort" -f2 results/boostspreadsort_allUnique.csv -l3 "radix_sort_msd" -f3 results/radixsortmsd_allUnique.csv -o imgs/all_unique.png
+#./plot.py -l1 "std::stable_sort" -f1 results/stdstablesort_allUnique.csv -l2 "boost::spreadsort" -f2 results/boostspreadsort_allUnique.csv -l3 "radix_sort_msd" -f3 results/radixsortmsd_allUnique.csv -o imgs/all_unique.png
 
-## int64_t, uniform range [-n/2, n/2]
-#../build/src/sortBmks  --benchmark_min_time=2 --benchmark_filter=SortingBmk_random_wholeRange/StdStableSort --benchmark_counters_tabular=true --benchmark_out_format=csv --benchmark_out=results/stdstablesort_random_wholeRange.csv
-
-#./plot.py -f1 results/stdstablesort_random_wholeRange.csv -f2 results/boostspreadsort_random_wholeRange.csv -f3 results/less_naivesort_random_wholeRange.csv -o imgs/all_random_wholeRange.png
-
+BMK="../build/src/diffdistrib_bmk"
+CMD="$BMK $BMK_OPTIONS"
+ALLBMKNAME=('SortingBmk_shuffled' 'SortingBmk_allequal' 'SortingBmk_ascending' 'SortingBmk_descending' 'SortingBmk_fewunique' 'SortingBmk_almostsorted')
+for BMKNAME in ${ALLBMKNAME[@]}; do
+    for BMKTYPE in 'StdStableSort' 'BoostSpreadSort' 'MSDRadixSort' 'LSDRadixSort'; do
+    $CMD --benchmark_filter=$BMKNAME/$BMKTYPE --benchmark_out=results/${BMKNAME}_${BMKTYPE}.csv
+done
+done
