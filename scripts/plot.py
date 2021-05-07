@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7
+#!/usr/local/bin/python3
 import argparse
 import logging
 import numpy as np
@@ -52,11 +52,22 @@ def setAxis(axes):
     axes.yaxis.set_tick_params(width=1.0)
     axes.grid(b=False)
 
-def plot(firstData, secondData, thirdData, outputFileName, firstLabel, secondLabel, thirdLabel, ranges, firstTimeColumn, secondTimeColumn):
+def plot(firstData, secondData, thirdData, fourthData, outputFileName, firstLabel, secondLabel, thirdLabel, fourthLabel, ranges, firstTimeColumn, secondTimeColumn):
     fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, figsize=(6, 6))
-    axes.plot(firstData['input']/1000, firstData[firstTimeColumn], linestyle='-', color=colorOrange, linewidth=2, marker='v', markersize=5)
-    axes.plot(secondData['input']/1000, secondData[secondTimeColumn], linestyle='-', color=colorGreen, linewidth=2, marker='^', markersize=5)
-    axes.plot(thirdData['input']/1000, thirdData[secondTimeColumn], linestyle='-', color=colorGray, linewidth=2, marker='o', markersize=5)
+
+    labels = []
+    if firstLabel != None:
+        axes.plot(firstData['input']/1000, firstData[firstTimeColumn], linestyle='-', color=colorOrange, linewidth=2, marker='v', markersize=5)
+        labels.append(firstLabel)
+    if secondLabel != None:
+        axes.plot(secondData['input']/1000, secondData[secondTimeColumn], linestyle='-', color=colorGreen, linewidth=2, marker='^', markersize=5)
+        labels.append(secondLabel)
+    if thirdLabel != None:
+        axes.plot(thirdData['input']/1000, thirdData[secondTimeColumn], linestyle='-', color=colorGray, linewidth=2, marker='o', markersize=5)
+        labels.append(thirdLabel)
+    if fourthLabel != None:
+        axes.plot(fourthData['input']/1000, fourthData[secondTimeColumn], linestyle='-', color=colorRed, linewidth=2, marker='s', markersize=5)
+        labels.append(fourthLabel)
 
     axes.set_xlabel(r"#N, k", labelpad=3, fontsize=fontSize)
     axes.set_ylabel(r"Time,  us", labelpad=0, fontsize=fontSize)
@@ -64,28 +75,41 @@ def plot(firstData, secondData, thirdData, outputFileName, firstLabel, secondLab
         axes.axis(ranges)
     #axes.xaxis.set_ticks( np.arange(xmin, xmax+1, 1.0) )
     #axes.yaxis.set_ticks( np.arange(ymin, ymax+1, 4.0) )
-    axes.legend([firstLabel, secondLabel, thirdLabel], numpoints = 1, loc=2, frameon=False)
+    axes.legend(labels, numpoints = 1, loc=2, frameon=False)
     setAxis(axes)
     plt.savefig(outputFileName, dpi=300, transparent=isTransparent)
 
-def loadAndPlot(firstDataFileName, secondDataFileName, thirdDataFileName, outputFileName, firstLabel, secondLabel, thirdLabel, ranges = None, firstTimeColumn = 'cpu_time', secondTimeColumn = 'cpu_time'):
-    firstData = read_data(firstDataFileName)
-    secondData = read_data(secondDataFileName)
-    thirdData = read_data(thirdDataFileName)
-    plot(firstData, secondData, thirdData, outputFileName, firstLabel, secondLabel, thirdLabel, ranges, firstTimeColumn, secondTimeColumn)
+def loadAndPlot(firstDataFileName, secondDataFileName, thirdDataFileName, fourthDataFileName, outputFileName, firstLabel, secondLabel, thirdLabel, fourthLabel, ranges = None, firstTimeColumn = 'cpu_time', secondTimeColumn = 'cpu_time'):
+    firstData = None
+    if firstDataFileName != None:
+        firstData = read_data(firstDataFileName)
+    secondData = None
+    if secondDataFileName != None:
+        secondData = read_data(secondDataFileName)
+    thirdData = None
+    if thirdDataFileName != None:
+        thirdData = read_data(thirdDataFileName)
+
+    fourthData = None
+    if fourthDataFileName != None:
+        fourthData = read_data(fourthDataFileName)
+
+    plot(firstData, secondData, thirdData, fourthData, outputFileName, firstLabel, secondLabel, thirdLabel, fourthLabel, ranges, firstTimeColumn, secondTimeColumn)
 
 def main():
     parser = argparse.ArgumentParser(description='Plot one benchmark vs the other and render the plot into the file.')
     parser.add_argument('-f1','--file1', help='First input csv', required=True)
     parser.add_argument('-f2','--file2', help='Second input csv', required=True)
-    parser.add_argument('-f3','--file3', help='Third input csv', required=True)
+    parser.add_argument('-f3','--file3', help='Third input csv', required=False, default = None)
+    parser.add_argument('-f4','--file4', help='Fourth input csv', required=False, default = None)
     parser.add_argument('-l1','--lab1', help='First input label', required=True)
-    parser.add_argument('-l2','--lab2', help='Second input label', required=False, default="std::stable_sort")
-    parser.add_argument('-l3','--lab3', help='Third input label', required=False, default="boost::spreadsort")
+    parser.add_argument('-l2','--lab2', help='Second input label', required=False, default="")
+    parser.add_argument('-l3','--lab3', help='Third input label', required=False, default=None)
+    parser.add_argument('-l4','--lab4', help='Fourth input label', required=False, default=None)
     parser.add_argument('-o','--output', help='Output image file', required=False, default="naivesort")
     args = vars(parser.parse_args())
 
-    loadAndPlot(args['file1'], args['file2'], args['file3'], args['output'], args['lab1'], args['lab2'], args['lab3'])
+    loadAndPlot(args['file1'], args['file2'], args['file3'], args['file4'], args['output'], args['lab1'], args['lab2'], args['lab3'], args['lab4'])
 
 if __name__ == "__main__":
     main()
