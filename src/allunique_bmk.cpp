@@ -9,6 +9,7 @@
 
 #include "radix_sort_lsd.h"
 #include "radix_sort_msd.h"
+#include "radix_sort_hybrid.h"
 
 #define TEST_SIZE DenseRange(10000, 600000, 50000)
 
@@ -58,7 +59,7 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, BoostSpreadSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_allUnique, BoostSpreadSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_allUnique, RadixSortMSD)
+BENCHMARK_DEFINE_F(SortingBmk_allUnique, MSDRadixSort)
 (benchmark::State& state)
 {
     const auto n = state.range(0);
@@ -72,9 +73,25 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, RadixSortMSD)
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_allUnique, RadixSortMSD)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_allUnique, MSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_allUnique, RadixSortLSD)
+BENCHMARK_DEFINE_F(SortingBmk_allUnique, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<uint64_t> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_allUnique, HybridRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_allUnique, LSDRadixSort)
 (benchmark::State& state)
 {
     const auto n = state.range(0);
@@ -88,7 +105,7 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, RadixSortLSD)
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_allUnique, RadixSortLSD)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_allUnique, LSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
 /// uniform random numbers in the range [0, 1e9]
 ///
@@ -159,5 +176,21 @@ BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, MSDRadixSort)
     }
 }
 BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, MSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, HybridRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
 BENCHMARK_MAIN();

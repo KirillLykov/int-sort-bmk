@@ -9,6 +9,7 @@
 
 #include "radix_sort_lsd.h"
 #include "radix_sort_msd.h"
+#include "radix_sort_hybrid.h"
 
 #define BMKBODY(SORT)                                                \
     {                                                                \
@@ -23,7 +24,7 @@
     }
 
 #define TEST_SIZE Arg(400000)
-#define TIME_UNIT Unit(benchmark::kMicrosecond)
+#define TIME_UNIT Unit(benchmark::kMillisecond)
 
 using T = uint64_t;
 
@@ -60,7 +61,7 @@ BENCHMARK_DEFINE_F(SortingBmk_shuffled, BoostSpreadSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_shuffled, BoostSpreadSort)->TIME_UNIT->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_shuffled, RadixSortMSD)
+BENCHMARK_DEFINE_F(SortingBmk_shuffled, MSDRadixSort)
 (benchmark::State& state)
 {
     const auto n = state.range(0);
@@ -74,9 +75,25 @@ BENCHMARK_DEFINE_F(SortingBmk_shuffled, RadixSortMSD)
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_shuffled, RadixSortMSD)->TIME_UNIT->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_shuffled, MSDRadixSort)->TIME_UNIT->TEST_SIZE;
 
-BENCHMARK_DEFINE_F(SortingBmk_shuffled, RadixSortLSD)
+BENCHMARK_DEFINE_F(SortingBmk_shuffled, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_shuffled, HybridRadixSort)->TIME_UNIT->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_shuffled, LSDRadixSort)
 (benchmark::State& state)
 {
     const auto n = state.range(0);
@@ -90,7 +107,7 @@ BENCHMARK_DEFINE_F(SortingBmk_shuffled, RadixSortLSD)
         benchmark::ClobberMemory();
     }
 }
-BENCHMARK_REGISTER_F(SortingBmk_shuffled, RadixSortLSD)->TIME_UNIT->TEST_SIZE;
+BENCHMARK_REGISTER_F(SortingBmk_shuffled, LSDRadixSort)->TIME_UNIT->TEST_SIZE;
 
 ///
 class SortingBmk_allequal : public benchmark::Fixture {
@@ -158,6 +175,22 @@ BENCHMARK_DEFINE_F(SortingBmk_allequal, MSDRadixSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_allequal, MSDRadixSort)->TIME_UNIT->TEST_SIZE;
 
+BENCHMARK_DEFINE_F(SortingBmk_allequal, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_allequal, HybridRadixSort)->TIME_UNIT->TEST_SIZE;
+
 ///
 class SortingBmk_ascending : public benchmark::Fixture {
 public:
@@ -224,6 +257,22 @@ BENCHMARK_DEFINE_F(SortingBmk_ascending, MSDRadixSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_ascending, MSDRadixSort)->TIME_UNIT->TEST_SIZE;
 
+BENCHMARK_DEFINE_F(SortingBmk_ascending, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_ascending, HybridRadixSort)->TIME_UNIT->TEST_SIZE;
+
 ///
 class SortingBmk_descending : public benchmark::Fixture {
 public:
@@ -288,6 +337,22 @@ BENCHMARK_DEFINE_F(SortingBmk_descending, MSDRadixSort)
     }
 }
 BENCHMARK_REGISTER_F(SortingBmk_descending, MSDRadixSort)->TIME_UNIT->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_descending, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_descending, HybridRadixSort)->TIME_UNIT->TEST_SIZE;
 
 /// 5 unique elements
 ///
@@ -365,6 +430,22 @@ BENCHMARK_DEFINE_F(SortingBmk_fewunique, MSDRadixSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_fewunique, MSDRadixSort)->TIME_UNIT->TEST_SIZE;
 
+BENCHMARK_DEFINE_F(SortingBmk_fewunique, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_fewunique, HybridRadixSort)->TIME_UNIT->TEST_SIZE;
+
 /// sorted array with n/1000 swaped elements
 ///
 class SortingBmk_almostsorted : public benchmark::Fixture {
@@ -439,5 +520,21 @@ BENCHMARK_DEFINE_F(SortingBmk_almostsorted, MSDRadixSort)
     }
 }
 BENCHMARK_REGISTER_F(SortingBmk_almostsorted, MSDRadixSort)->TIME_UNIT->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_almostsorted, HybridRadixSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        radix_sort_hybrid(values);
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_almostsorted, HybridRadixSort)->TIME_UNIT->TEST_SIZE;
 
 BENCHMARK_MAIN();

@@ -1,6 +1,3 @@
-// Radix sort is taken from https://github.com/travisdowns/sort-bench
-// Unknown license
-
 #include <algorithm>
 #include <array>
 #include <assert.h>
@@ -30,12 +27,6 @@ void radix_msd_rec(std::vector<T>& from, std::vector<T>& to, size_t lo, size_t h
 {
     constexpr T RADIX_MASK = RADIX_SIZE - 1;
     auto partFunc = [RADIX_MASK](T v, size_t i) -> T { return (v >> i) & RADIX_MASK; }; // inlined
-    if (hi - lo < 16) { // there will be insertion sort under the hood
-        auto s = &from.front() + lo;
-        auto e = &from.front() + hi;
-        std::stable_sort(s, e);
-        return;
-    }
 
     size_t shift = pass * RADIX_BITS;
 
@@ -80,7 +71,7 @@ template <class T>
 void radix_sort_msd(std::vector<T>& data)
 {
     std::vector<T> buf(data.size());
-    msd_impl::radix_msd_rec(data, buf, 0, data.size(), RADIX_LEVELS - 1);
+    msd_impl::radix_msd_rec(data, buf, 0, data.size(), msd_impl::RADIX_LEVELS - 1);
     if (msd_impl::DO_FINAL_SWAP)
         swap(data, buf);
 }
