@@ -7,9 +7,9 @@
 #include <random>
 #include <vector>
 
+#include "radix_sort_hybrid.h"
 #include "radix_sort_lsd.h"
 #include "radix_sort_msd.h"
-#include "radix_sort_hybrid.h"
 
 #define TEST_SIZE DenseRange(10000, 600000, 50000)
 

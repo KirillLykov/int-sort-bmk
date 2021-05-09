@@ -2,9 +2,9 @@
 #include <random>
 #include <vector>
 
+#include "radix_sort_hybrid.h"
 #include "radix_sort_lsd.h"
 #include "radix_sort_msd.h"
-#include "radix_sort_hybrid.h"
 
 // was lazy to install gtests on my personal machine
 int main(int, char**)

@@ -9,7 +9,7 @@ const size_t RADIX_BITS = 8;
 const size_t RADIX_SIZE = 1ull << RADIX_BITS;
 const size_t RADIX_LEVELS = (63ull / RADIX_BITS) + 1ull;
 const size_t DO_FINAL_SWAP = RADIX_LEVELS & 1ull; // if RADIX_LEVELS is even, buf contains the result
-const size_t LSD_THRESHOLD = 1<<14;
+const size_t LSD_THRESHOLD = 1 << 14;
 
 static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count)
 {
@@ -22,10 +22,11 @@ static bool is_trivial(size_t freqs[RADIX_SIZE], size_t count)
     return true;
 }
 
-using freq_array_type = size_t [RADIX_LEVELS][RADIX_SIZE];
+using freq_array_type = size_t[RADIX_LEVELS][RADIX_SIZE];
 
-template<class T>
-static void count_frequency(T* a, size_t count, freq_array_type freqs, size_t hiPass) {
+template <class T>
+static void count_frequency(T* a, size_t count, freq_array_type freqs, size_t hiPass)
+{
     constexpr T RADIX_MASK = RADIX_SIZE - 1;
     for (size_t i = 0; i < count; i++) {
         T value = a[i];
@@ -37,7 +38,7 @@ static void count_frequency(T* a, size_t count, freq_array_type freqs, size_t hi
 }
 
 // LSD radix sort implementation by Travis, see radix_sort_lsd.h
-template<class T>
+template <class T>
 void radix_lsd(T* a, T* queue_area, size_t count, size_t hiPass)
 {
     constexpr T RADIX_MASK = RADIX_SIZE - 1;
@@ -58,7 +59,7 @@ void radix_lsd(T* a, T* queue_area, size_t count, size_t hiPass)
 
         // array of pointers to the current position in each queue, which we set up based on the
         // known final sizes of each queue (i.e., "tighly packed")
-        T * queue_ptrs[RADIX_SIZE], * next = to;
+        T *queue_ptrs[RADIX_SIZE], *next = to;
         for (size_t i = 0; i < RADIX_SIZE; i++) {
             queue_ptrs[i] = next;
             next += freqs[pass][i];
