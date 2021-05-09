@@ -22,8 +22,8 @@ def getTimeFromBmkJson(fileName):
     except:
         print("Failed to parse '%s'"%(fileName))
 
-sortAlgsLabels = ['std::stable_sort', 'boost::spread_sort', 'radix_sort_msd', 'radix_sort_lsd']
-distribTicksLabels = ['allequal', 'fewunique', 'shuffled', 'almostsorted', 'descending', 'ascending']
+sortAlgsLabels = ['std::stable_sort', 'boost::spread_sort', 'radix_sort_msd', 'radix_sort_lsd', 'radix_sort_hybrid']
+distribTicksLabels = ['almostsorted', 'all equal', 'few unique', 'ascending', 'shuffled', 'descending']
 
 colorRed = '#0A3FF4'
 colorBlack = 'black'
@@ -32,12 +32,13 @@ colorGreen = '#036d15'
 colorGray = 'gray' #'#18455c'
 colorOrange = '#EE7F2D' # old '#C44910'
 
-sortAlgsColors = [colorRed, colorGreen, colorBlue, colorBlack]
+sortAlgsColors = [colorRed, colorGreen, colorBlue, colorBlack, colorOrange]
 
 sortNamesMap = { 
     'BoostSpreadSort' : 1,
-    'LSDRadixSort' : 2,
-    'MSDRadixSort' : 3,
+    'MSDRadixSort' : 2,
+    'LSDRadixSort' : 3,
+    'HybridRadixSort' : 4,
     'StdStableSort' : 0 }
 
 resultsDir = "./results"
@@ -53,11 +54,12 @@ def customLegend():
 def plotDictOfDict(vals):
     shift = 0.0
     for distrib, sorts in vals.items():
+        print (distrib)
         times = [0]*len(sortNamesMap)
         for sort in sorted(sorts):
             ind = sortNamesMap[sort]
             times[ind] = sorts[sort]
-        print(distrib)
+            print(sort + " " + str(sorts[sort]))
         pos = np.arange(len(times)-1, -1, -1)*0.5+.5 + shift 
         barh(pos, times, align='center', height=0.5, color=sortAlgsColors)
         shift += 3.0

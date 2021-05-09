@@ -21,15 +21,7 @@ int main(int, char**)
 
     std::shuffle(vals.begin(), vals.end(), std::mt19937 { std::random_device {}() });
 
-    for (auto& v : vals)
-        std::cout << v << " ";
-    std::cout << std::endl;
-
-    //radixSort_count(vals);
-    //integer_sort(vals.begin(), vals.end());
-
-    //radix_sort6((uint64_t*)&vals.front(), vals.size());
-    radix_sort_msd(vals);
+    radix_sort_hybrid(vals);
 
     for (size_t i = 1; i < n; ++i) {
         if (vals[i - 1] > vals[i]) {

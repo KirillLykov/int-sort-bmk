@@ -77,7 +77,7 @@ def plot(firstData, secondData, thirdData, fourthData, outputFileName, firstLabe
     #axes.yaxis.set_ticks( np.arange(ymin, ymax+1, 4.0) )
     axes.legend(labels, numpoints = 1, loc=2, frameon=False)
     setAxis(axes)
-    plt.savefig(outputFileName, dpi=300, transparent=isTransparent)
+    plt.savefig(outputFileName, dpi=150, transparent=isTransparent)
 
 def loadAndPlot(firstDataFileName, secondDataFileName, thirdDataFileName, fourthDataFileName, outputFileName, firstLabel, secondLabel, thirdLabel, fourthLabel, ranges = None, firstTimeColumn = 'cpu_time', secondTimeColumn = 'cpu_time'):
     firstData = None

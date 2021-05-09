@@ -27,11 +27,9 @@ Plots can be found in `scripts/imgs`.
 
 ## Discussion
 
-![Figure 1. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique.png)
-
-![Figure 2. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9 ](scripts/imgs/all_uniform.png)
-
 ### Vanila radix sorts vs other sorting algorithms
+
+![Figure 1. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique.png)
 
 In this work we are interested in developing a hybrid sorting algorithm for sorting integers which is stable and faster than `std::stable_sort`.
 A well-known fast integers sorting algorithm is `boost:spread_sort` but it is not stable so we consider it just for comparison but are not going to use it.
@@ -39,6 +37,8 @@ A well-known fast integers sorting algorithm is `boost:spread_sort` but it is no
 In Figure 1, we apply selected sorting algorithms to a shuffled sequence of 64bits integers.
 We observe that both MSD and LSD radix sort implementations outperforms significantly other algorithms.
 LSD radix sort is faster only by 6% than the MSD implementation.
+
+![Figure 2. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9 ](scripts/imgs/uniform_1B.png)
 
 Now consider Figure 2.
 For this benchmark we generate uniformly distributed numbers in the range `[0, 1e9]`.
@@ -146,7 +146,7 @@ For this implementation there is some growth in load misses but it also gives so
 
 TODO continue this section
 
-
-![Figure X. MSD, LSD, Hybrid](scripts/imgs/hybrid.png)
+![Figure 4. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique_hybrid.png)
+![Figure 5. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9](scripts/imgs/uniform_1B_hybrid.png)
 
 
