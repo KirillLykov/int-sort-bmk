@@ -27,15 +27,18 @@ Plots can be found in `scripts/imgs`.
 
 ## Discussion
 
+In this work we are interested in developing a hybrid sorting algorithm for sorting integers which is stable and faster than `std::stable_sort`.
+A well-known fast integers sorting algorithm is `boost:spread_sort` but it is not stable so we consider it just for comparison but are not going to use it.
+
+We will benchmark radix sort implementations.
+Namely, LSD radix sort, MSD radix sort, and hybrid radix sort algorithm.
+
 ### Vanila radix sorts vs other sorting algorithms
 
 <div>
 <img src="scripts/imgs/all_unique.png" alt="drawing" width="400"/>
 <p>Figure 1. Performance of the selected sorting algorithms on shuffled unique values</p>
 </div>
-
-In this work we are interested in developing a hybrid sorting algorithm for sorting integers which is stable and faster than `std::stable_sort`.
-A well-known fast integers sorting algorithm is `boost:spread_sort` but it is not stable so we consider it just for comparison but are not going to use it.
 
 In Figure 1, we apply selected sorting algorithms to a shuffled sequence of 64bits integers.
 We observe that both MSD and LSD radix sort implementations outperforms significantly other algorithms.
@@ -51,24 +54,27 @@ For this benchmark we generate uniformly distributed numbers in the range `[0, 1
 LSD radix sort appears to be several times faster than other sorting algorithms.
 But, quite surprisingly, MSD radix sort performs poorly.
 
-TODO: Requires additional investigation.
+TODO: Requires additional investigation:
+* Why MSD performs so pourly?
+* Why plot for MSD has peaks?
 
 ### MSD radix sort performance on different distributions
 
-Here we take a look the performance of selected sorting algorithms on the different data distrubtions.
+Consider the performance of selected sorting algorithms on the different data distrubtions.
 The size of the sequence if 400k for all the tests.
 
 <div>
-<img src="scripts/imgs/differentdistrib.png" alt="drawing" width="400"/>
+<img src="scripts/imgs/differentdistrib.png" alt="drawing" width="600"/>
 <p>Figure 3. Various distributions</p>
 </div>
 
-In ascending, descending, shuffled, few unique MSD and LSD implementations are comparable.
-While on the sequence with only one unique value MSD performs faster.
+MSD and LSD implementations have comparable performance on most of the distributions.
+But on the sequence with only one unique value and almost sorted sequence LSD performs faster.
 
 It is interesting that `boost::spread_sort` performs so good on ascending/descending/almostsorted/fewunique sequence.
-They might detect these cases or it is the property of the underlying sort algorithm.
-This requires more investigation to use the same approach if possible for the hybrid radix sort algorithm which we want to develop.
+TODO: 
+* Do they detect these cases or it is the property of the underlying sort algorithm?
+* Is it possible to reuse their approach for the hybrid radix sort algorithm which we want to develop.
 
 
 ### MSD vs LSD radix sort
@@ -82,7 +88,7 @@ This implementation is characterized by several optimizations:
 
 First, we consider sorting array of shuffled numbers from the range `[0, n]`, where `n` is the lenght of the input.
 
-From the Figure 1, we observe that on the employed input LSD consistently overperforms the MSD implementation by `XX%`.
+From the Figure 2, we observe that on the employed input LSD consistently overperforms the MSD implementation.
 
 Profiling shows the following two hot places in the implementation of MSD radix sort:
 
@@ -140,8 +146,7 @@ Probably, there exists a better way to estimate bandwidth consumption.
 ### Hybrid MSD/LSD radix sort
 
 On the ways to improve performance of MSD radix sort is to use LSD when the size of the subarray is less than some threshold.
-
-This behaviour is enabled by macro `HYBRID_MSD_LSD` flag in cmake file.
+This is implemented in hybrid radix sort implementation.
 
 We tested this implementation on the CPU with L1 cache size of 32K but the optimal size of the threshold is 16K.
 This might be due to the fact that the current implementation uses additional buffer of size `N`.
