@@ -30,6 +30,10 @@ Plots can be found in `scripts/imgs`.
 ### Vanila radix sorts vs other sorting algorithms
 
 ![Figure 1. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique.png)
+<div>
+<img src="scripts/imgs/all_unique.png" alt="drawing" width="150"/>
+<p>Figure 1. Performance of the selected sorting algorithms on shuffled unique values</p>
+</div>
 
 In this work we are interested in developing a hybrid sorting algorithm for sorting integers which is stable and faster than `std::stable_sort`.
 A well-known fast integers sorting algorithm is `boost:spread_sort` but it is not stable so we consider it just for comparison but are not going to use it.
