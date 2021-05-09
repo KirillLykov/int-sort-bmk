@@ -31,7 +31,7 @@ Plots can be found in `scripts/imgs`.
 
 ![Figure 1. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique.png)
 <div>
-<img src="scripts/imgs/all_unique.png" alt="drawing" width="150"/>
+<img src="scripts/imgs/all_unique.png" alt="drawing" width="400"/>
 <p>Figure 1. Performance of the selected sorting algorithms on shuffled unique values</p>
 </div>
 
