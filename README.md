@@ -29,7 +29,6 @@ Plots can be found in `scripts/imgs`.
 
 ### Vanila radix sorts vs other sorting algorithms
 
-![Figure 1. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique.png)
 <div>
 <img src="scripts/imgs/all_unique.png" alt="drawing" width="400"/>
 <p>Figure 1. Performance of the selected sorting algorithms on shuffled unique values</p>
@@ -42,7 +41,10 @@ In Figure 1, we apply selected sorting algorithms to a shuffled sequence of 64bi
 We observe that both MSD and LSD radix sort implementations outperforms significantly other algorithms.
 LSD radix sort is faster only by 6% than the MSD implementation.
 
-![Figure 2. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9 ](scripts/imgs/uniform_1B.png)
+<div>
+<img src="scripts/imgs/uniform_1B.png" alt="drawing" width="400"/>
+<p>Figure 2. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9</p>
+</div>
 
 Now consider Figure 2.
 For this benchmark we generate uniformly distributed numbers in the range `[0, 1e9]`.
@@ -56,7 +58,10 @@ TODO: Requires additional investigation.
 Here we take a look the performance of selected sorting algorithms on the different data distrubtions.
 The size of the sequence if 400k for all the tests.
 
-![Figure 3. Various distributions](scripts/imgs/differentdistrib.png)
+<div>
+<img src="scripts/imgs/differentdistrib.png" alt="drawing" width="400"/>
+<p>Figure 3. Various distributions</p>
+</div>
 
 In ascending, descending, shuffled, few unique MSD and LSD implementations are comparable.
 While on the sequence with only one unique value MSD performs faster.
@@ -150,7 +155,13 @@ For this implementation there is some growth in load misses but it also gives so
 
 TODO continue this section
 
-![Figure 4. Performance of the selected sorting algorithms on shuffled unique values](scripts/imgs/all_unique_hybrid.png)
-![Figure 5. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9](scripts/imgs/uniform_1B_hybrid.png)
+<div>
+<img src="scripts/imgs/all_unique_hybrid.png" alt="drawing" width="400"/>
+<p>Figure 4. Performance of the selected sorting algorithms on shuffled unique values</p>
+</div>
 
+<div>
+<img src="scripts/imgs/uniform_1B_hybrid.png" alt="drawing" width="400"/>
+<p>Figure 5. Performance of the selected sorting algorithms on values from uniform distribution for for the range 0..1e9</p>
+</div>
 
