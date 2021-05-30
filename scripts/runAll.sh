@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p ./results
+
 BMK="../build/src/allunique_bmk"
 BMK_OPTIONS="--benchmark_min_time=2 --benchmark_counters_tabular=true --benchmark_out_format=csv"
 CMD="$BMK $BMK_OPTIONS"
