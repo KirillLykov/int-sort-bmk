@@ -6,6 +6,8 @@
 #include "radix_sort_lsd.h"
 #include "radix_sort_msd.h"
 
+#include "wolfsort.h"
+
 // was lazy to install gtests on my personal machine
 int main(int, char**)
 {
@@ -22,7 +24,8 @@ int main(int, char**)
 
     std::shuffle(vals.begin(), vals.end(), std::mt19937 { std::random_device {}() });
 
-    radix_sort_hybrid(vals);
+    wolfsort(&vals[0], vals.size());
+    //radix_sort_hybrid(vals);
 
     for (size_t i = 1; i < n; ++i) {
         if (vals[i - 1] > vals[i]) {

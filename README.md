@@ -1,5 +1,8 @@
 # Radix sort implementation
 
+NOTE: This branch is to test wolf sort.
+It seems to be as slow as `std::stable_sort` for `uint64_t`.
+
 ## About
 
 This repo is to provide a fast and stable implementation of radix sort.

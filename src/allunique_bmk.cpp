@@ -11,6 +11,8 @@
 #include "radix_sort_lsd.h"
 #include "radix_sort_msd.h"
 
+#include "wolfsort.h"
+
 #define TEST_SIZE DenseRange(10000, 600000, 50000)
 
 #define BMKBODY(SORT)                                                \
@@ -107,6 +109,21 @@ BENCHMARK_DEFINE_F(SortingBmk_allUnique, LSDRadixSort)
 }
 BENCHMARK_REGISTER_F(SortingBmk_allUnique, LSDRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
+BENCHMARK_DEFINE_F(SortingBmk_allUnique, WolfSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<uint64_t> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        wolfsort(&values[0], values.size());
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_allUnique, WolfSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 /// uniform random numbers in the range [0, 1e9]
 ///
 class SortingBmk_uniform_1B : public benchmark::Fixture {
@@ -192,5 +209,21 @@ BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, HybridRadixSort)
     }
 }
 BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, HybridRadixSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
+
+BENCHMARK_DEFINE_F(SortingBmk_uniform_1B, WolfSort)
+(benchmark::State& state)
+{
+    const auto n = state.range(0);
+
+    std::vector<T> values(m_vals.size());
+    for (auto _ : state) {
+        std::copy(m_vals.begin(), m_vals.end(), values.begin());
+
+        wolfsort(&values[0], values.size());
+        benchmark::DoNotOptimize(values);
+        benchmark::ClobberMemory();
+    }
+}
+BENCHMARK_REGISTER_F(SortingBmk_uniform_1B, WolfSort)->Unit(benchmark::kMicrosecond)->TEST_SIZE;
 
 BENCHMARK_MAIN();

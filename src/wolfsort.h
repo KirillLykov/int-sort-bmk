@@ -52,7 +52,7 @@ int cmp_long(const void * a, const void * b)
 	return *(long long *) a - *(long long *) b;
 }
 
-
+namespace details {
 void wolfsort(void *array, size_t nmemb, unsigned char size, CMPFUNC *ignore)
 {
 	if (nmemb < 1024)
@@ -246,4 +246,9 @@ void wolfsort(void *array, size_t nmemb, unsigned char size, CMPFUNC *ignore)
 //	assert(size == sizeof(int) || size == sizeof(long long));
 
 	quadsort(array, nmemb, size, ignore);
+}
+}
+void wolfsort(uint64_t *array, size_t nmemb)
+{
+    details::wolfsort((void*)array, nmemb, 8, cmp_long);
 }
